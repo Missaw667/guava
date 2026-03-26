@@ -210,8 +210,7 @@ public final class Sets {
    * Iterables#addAll}.
    *
    * <p><b>Note:</b> if mutability is not required and the elements are non-null, use {@link
-   * ImmutableSet#copyOf(Iterable)} instead. (Or, change {@code elements} to be a {@link
-   * FluentIterable} and call {@code elements.toSet()}.)
+   * ImmutableSet#copyOf(Iterable)} instead.
    *
    * <p><b>Note:</b> if {@code E} is an {@link Enum} type, use {@link #newEnumSet(Iterable, Class)}
    * instead.
@@ -562,8 +561,7 @@ public final class Sets {
    * in the following code fragment:
    *
    * {@snippet :
-   * Set<Object> identityHashSet = Sets.newSetFromMap(
-   *     new IdentityHashMap<Object, Boolean>());
+   * Set<Object> identityHashSet = Sets.newSetFromMap(new IdentityHashMap<Object, Boolean>());
    * }
    *
    * <p>The returned set is serializable if the backing map is.
@@ -745,35 +743,28 @@ public final class Sets {
       Set<?> that = (Set<?>) object;
 
       int thatMaxSize = maxSize(that);
-      if (minSize() > thatMaxSize) {
-        return false; // this.size() > that.size()
-      }
       int thatMinSize = minSize(that);
-      if (maxSize() < thatMinSize) {
-        return false; // this.size() < that.size()
-      }
+
+      if (!checkBounds(that)) return false;
 
       // the base implementation from AbstractSet uses size() and containsAll()
       // both require iterating over the entire SetView
       // we avoid iterating twice by doing the equivalent of both in one iteration
-      int thisSize = 0;
-      for (E e : this) {
-        try {
-          if (!that.contains(e)) {
-            return false;
-          }
-        } catch (NullPointerException | ClassCastException ignored) {
-          return false;
-        }
-        thisSize++;
-      } // that.containsAll(this) so that.size() >= this.size()
+      int thisSize = countCommonElements(that);
+      if (thisSize == -1) return false;
 
+       // that.containsAll(this) so that.size() >= this.size()
+
+      return checkFinalSize(thisSize, thatMaxSize, thatMinSize, that);
+    }
+
+    private static boolean checkFinalSize(int thisSize, int thatMaxSize, int thatMinSize, Set<?> that) {
       if (thisSize == thatMaxSize) {
         // this.size() == maxSize(that) >= that.size() >= this.size()
-        return true; // this.size() == that.size()
+        return true;
       } else if (thisSize < thatMinSize) {
         // this.size() < minSize(that) <= that.size()
-        return false; // this.size() < that.size()
+        return false;
       } else { // that can only be a SetView at this point
         int thatSize = 0;
         for (Object unused : that) {
@@ -781,10 +772,32 @@ public final class Sets {
             return false;
           }
         }
-        return true; // that.size() == this.size()
+        return true;
+        
       }
     }
 
+    private boolean checkBounds(Set<?> that) {
+      int thatMaxSize = maxSize(that);
+      int thatMinSize = minSize(that);
+
+      return (minSize() <= thatMaxSize) && (maxSize() >= thatMinSize);
+    }
+
+    private int countCommonElements(Set<?> that) {
+      int count = 0;
+      for (E e : this) {
+        try {
+          if (!that.contains(e)) return -1;
+        } catch (NullPointerException | ClassCastException ignored) {
+          return -1;
+        }
+        count++;
+      }
+      return count;
+    }
+
+    
     /**
      * Returns a lower bound for {@link #size()} based on the sizes of the backing sets.
      *
@@ -927,8 +940,7 @@ public final class Sets {
    *
    * // impossible for a non-String to be in the intersection
    * SuppressWarnings("unchecked")
-   * Set<String> badStrings = (Set) Sets.intersection(
-   *     aFewBadObjects, manyBadStrings);
+   * Set<String> badStrings = (Set) Sets.intersection(aFewBadObjects, manyBadStrings);
    * }
    *
    * <p>This is unfortunate, but should come up only very rarely.
@@ -1427,9 +1439,7 @@ public final class Sets {
    * product</a>" of the sets. For example:
    *
    * {@snippet :
-   * Sets.cartesianProduct(ImmutableList.of(
-   *     ImmutableSet.of(1, 2),
-   *     ImmutableSet.of("A", "B", "C")))
+   * Sets.cartesianProduct(ImmutableList.of(ImmutableSet.of(1, 2), ImmutableSet.of("A", "B", "C")))
    * }
    *
    * <p>returns a set containing six lists:
@@ -1484,9 +1494,7 @@ public final class Sets {
    * product</a>" of the sets. For example:
    *
    * {@snippet :
-   * Sets.cartesianProduct(
-   *     ImmutableSet.of(1, 2),
-   *     ImmutableSet.of("A", "B", "C"))
+   * Sets.cartesianProduct(ImmutableSet.of(1, 2), ImmutableSet.of("A", "B", "C"))
    * }
    *
    * <p>returns a set containing six lists:
@@ -2089,7 +2097,7 @@ public final class Sets {
    * {@snippet :
    * NavigableSet<E> set = synchronizedNavigableSet(new TreeSet<E>());
    * NavigableSet<E> set2 = set.descendingSet().headSet(foo);
-   *  ...
+   * ...
    * synchronized (set) { // Note: set, not set2!!!
    *   // Must be in the synchronized block
    *   Iterator<E> it = set2.descendingIterator();
