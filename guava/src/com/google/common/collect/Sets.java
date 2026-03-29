@@ -141,6 +141,31 @@ public final class Sets {
     }
   }
 
+
+  /**
+   * @deprecated Use {@link SetsMath#powerSet(Set)} instead.
+   */
+  @Deprecated
+  public static <E> Set<Set<E>> powerSet(Set<E> set) {
+    return SetsMath.powerSet(set);
+  }
+
+  /**
+   * @deprecated Use {@link SetsMath#cartesianProduct(List)} instead.
+   */
+  @Deprecated
+  public static <B> Set<List<B>> cartesianProduct(List<? extends Set<? extends B>> sets) {
+    return SetsMath.cartesianProduct(sets);
+  }
+
+  /**
+   * @deprecated Use {@link SetsMath#combinations(Set, int)} instead.
+   */
+  @Deprecated
+  public static <E> Set<Set<E>> combinations(Set<E> set, int size) {
+    return SetsMath.combinations(set, size);
+  }
+
   /**
    * Returns a {@code Collector} that accumulates the input elements into a new {@code ImmutableSet}
    * with an implementation specialized for enums. Unlike {@link ImmutableSet#toImmutableSet}, the
@@ -1433,60 +1458,8 @@ public final class Sets {
     }
   }
 
-  /**
-   * Returns every possible list that can be formed by choosing one element from each of the given
-   * sets in order; the "n-ary <a href="http://en.wikipedia.org/wiki/Cartesian_product">Cartesian
-   * product</a>" of the sets. For example:
-   *
-   * {@snippet :
-   * Sets.cartesianProduct(ImmutableList.of(ImmutableSet.of(1, 2), ImmutableSet.of("A", "B", "C")))
-   * }
-   *
-   * <p>returns a set containing six lists:
-   *
-   * <ul>
-   *   <li>{@code ImmutableList.of(1, "A")}
-   *   <li>{@code ImmutableList.of(1, "B")}
-   *   <li>{@code ImmutableList.of(1, "C")}
-   *   <li>{@code ImmutableList.of(2, "A")}
-   *   <li>{@code ImmutableList.of(2, "B")}
-   *   <li>{@code ImmutableList.of(2, "C")}
-   * </ul>
-   *
-   * <p>The result is guaranteed to be in the "traditional", lexicographical order for Cartesian
-   * products that you would get from nesting for loops:
-   *
-   * {@snippet :
-   * for (B b0 : sets.get(0)) {
-   *   for (B b1 : sets.get(1)) {
-   *     ...
-   *     ImmutableList<B> tuple = ImmutableList.of(b0, b1, ...);
-   *     // operate on tuple
-   *   }
-   * }
-   * }
-   *
-   * <p>Note that if any input set is empty, the Cartesian product will also be empty. If no sets at
-   * all are provided (an empty list), the resulting Cartesian product has one element, an empty
-   * list (counter-intuitive, but mathematically consistent).
-   *
-   * <p><i>Performance notes:</i> while the cartesian product of sets of size {@code m, n, p} is a
-   * set of size {@code m x n x p}, its actual memory consumption is much smaller. When the
-   * cartesian set is constructed, the input sets are merely copied. Only as the resulting set is
-   * iterated are the individual lists created, and these are not retained after iteration.
-   *
-   * @param sets the sets to choose elements from, in the order that the elements chosen from those
-   *     sets should appear in the resulting lists
-   * @param <B> any common base class shared by all axes (often just {@link Object})
-   * @return the Cartesian product, as an immutable set containing immutable lists
-   * @throws NullPointerException if {@code sets}, any one of the {@code sets}, or any element of a
-   *     provided set is null
-   * @throws IllegalArgumentException if the cartesian product size exceeds the {@code int} range
-   * @since 2.0
-   */
-  public static <B> Set<List<B>> cartesianProduct(List<? extends Set<? extends B>> sets) {
-    return CartesianSet.create(sets);
-  }
+
+
 
   /**
    * Returns every possible list that can be formed by choosing one element from each of the given
