@@ -11,54 +11,6 @@ class CartesianSet<E> extends ForwardingCollection<List<E>>
     private final transient ImmutableList<ImmutableSet<E>> axes;
     private final transient CartesianList<E> delegate;
 
-    static <E> Set<List<E>> create(List<? extends Set<? extends E>> sets) {
-        ImmutableList.Builder<ImmutableSet<E>> axesBuilder = new ImmutableList.Builder<>(sets.size());
-        for (Set<? extends E> set : sets) {
-            ImmutableSet<E> copy = ImmutableSet.copyOf(set);
-            if (copy.isEmpty()) {
-                return ImmutableSet.of();
-            }
-            axesBuilder.add(copy);
-        }
-        ImmutableList<ImmutableSet<E>> axes = axesBuilder.build();
-        ImmutableList<List<E>> listAxes =
-                new ImmutableList<List<E>>() {
-                    @Override
-                    public int size() {
-                        return axes.size();
-                    }
-
-                    @Override
-                    public List<E> get(int index) {
-                        return axes.get(index).asList();
-                    }
-
-                    @Override
-                    boolean isPartialView() {
-                        return true;
-                    }
-
-                    // redeclare to help optimizers with b/310253115
-                    @SuppressWarnings("RedundantOverride")
-                    @Override
-                    @com.google.common.annotations.J2ktIncompatible
-                    @com.google.common.annotations.GwtIncompatible
-                    Object writeReplace() {
-                        return super.writeReplace();
-                    }
-                };
-        return new com.google.common.collect.CartesianSet<E>(axes, new CartesianList<E>(listAxes));
-    }
-
-    private CartesianSet(ImmutableList<ImmutableSet<E>> axes, CartesianList<E> delegate) {
-        this.axes = axes;
-        this.delegate = delegate;
-    }
-
-    @Override
-    protected Collection<List<E>> delegate() {
-        return delegate;
-    }
 
     @Override
     public boolean contains(@Nullable Object object) {
@@ -115,4 +67,54 @@ class CartesianSet<E> extends ForwardingCollection<List<E>>
         hash += adjust;
         return ~~hash;
     }
+
+    static <E> Set<List<E>> create(List<? extends Set<? extends E>> sets) {
+        ImmutableList.Builder<ImmutableSet<E>> axesBuilder = new ImmutableList.Builder<>(sets.size());
+        for (Set<? extends E> set : sets) {
+            ImmutableSet<E> copy = ImmutableSet.copyOf(set);
+            if (copy.isEmpty()) {
+                return ImmutableSet.of();
+            }
+            axesBuilder.add(copy);
+        }
+        ImmutableList<ImmutableSet<E>> axes = axesBuilder.build();
+        ImmutableList<List<E>> listAxes =
+                new ImmutableList<List<E>>() {
+                    @Override
+                    public int size() {
+                        return axes.size();
+                    }
+
+                    @Override
+                    public List<E> get(int index) {
+                        return axes.get(index).asList();
+                    }
+
+                    @Override
+                    boolean isPartialView() {
+                        return true;
+                    }
+
+                    // redeclare to help optimizers with b/310253115
+                    @SuppressWarnings("RedundantOverride")
+                    @Override
+                    @com.google.common.annotations.J2ktIncompatible
+                    @com.google.common.annotations.GwtIncompatible
+                    Object writeReplace() {
+                        return super.writeReplace();
+                    }
+                };
+        return new com.google.common.collect.CartesianSet<E>(axes, new CartesianList<E>(listAxes));
+    }
+
+    private CartesianSet(ImmutableList<ImmutableSet<E>> axes, CartesianList<E> delegate) {
+        this.axes = axes;
+        this.delegate = delegate;
+    }
+
+    @Override
+    protected Collection<List<E>> delegate() {
+        return delegate;
+    }
+
 }
