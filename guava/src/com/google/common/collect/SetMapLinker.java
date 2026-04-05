@@ -16,7 +16,7 @@ import static java.lang.Math.ceil;
 final class SetMapLinker {
     private SetMapLinker() {}
     private static final double LOAD_FACTOR = 0.75;
-    
+
     // Extrait de Sets.java (Ligne 405)
     static <E> Set<E> newIdentityHashSet() {
         return Collections.newSetFromMap(new IdentityHashMap<E, Boolean>());
