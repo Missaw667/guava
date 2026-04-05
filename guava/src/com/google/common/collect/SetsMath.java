@@ -112,7 +112,7 @@ public final class SetsMath {
 
 
     /** Itérateur extrait pour réduire la complexité de SetsMath.combinations */
-    class CombinationIterator<E> extends AbstractIterator<Set<E>> {
+    static class CombinationIterator<E> extends AbstractIterator<Set<E>> {
         private final ImmutableMap<E, Integer> index;
         private final int size;
         private final BitSet bits;
@@ -145,7 +145,7 @@ public final class SetsMath {
     }
 
     /** Classe de support pour représenter une combinaison unique */
-    class CombinationSet<E> extends SetMapLinker.ImprovedAbstractSet<E> {
+    static class CombinationSet<E> extends SetMapLinker.ImprovedAbstractSet<E> {
         private final ImmutableMap<E, Integer> index;
         private final BitSet bits;
         private final int size;

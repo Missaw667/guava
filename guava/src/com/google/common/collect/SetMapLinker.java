@@ -15,7 +15,8 @@ import static java.lang.Math.ceil;
  */
 final class SetMapLinker {
     private SetMapLinker() {}
-
+    private static final double LOAD_FACTOR = 0.75;
+    
     // Extrait de Sets.java (Ligne 405)
     static <E> Set<E> newIdentityHashSet() {
         return Collections.newSetFromMap(new IdentityHashMap<E, Boolean>());
@@ -49,7 +50,7 @@ final class SetMapLinker {
             // computed from that capacity. Because the internal table is only allocated on the first
             // write, we won't see copying because of the new threshold. So it is always OK to use the
             // calculation here.
-            return (int) ceil(expectedSize / 0.75);
+            return (int) ceil(expectedSize / LOAD_FACTOR);
         }
         return Integer.MAX_VALUE; // any large value
     }
