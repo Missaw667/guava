@@ -149,13 +149,33 @@ final class SetMapLinker {
         return new Sets.UnmodifiableNavigableSet<>(set);
     }
 
-    /** Remove each element in an iterable from a set. */
+    /**
+     * Décomposition d'une méthode hybride (commande + requête).
+     * Sépare la recherche des éléments à supprimer de l'action de suppression.
+     */
     static boolean removeAllImpl(Set<?> set, Iterator<?> iterator) {
-        boolean changed = false;
+        List<Object> toRemove = findElementsToRemove(set, iterator);
+        return performRemoval(set, toRemove);
+    }
+
+    /** Identifie les éléments présents dans les deux structures */
+    private static List<Object> findElementsToRemove(Set<?> set, Iterator<?> iterator) {
+        List<Object> found = new ArrayList<>();
         while (iterator.hasNext()) {
-            changed |= set.remove(iterator.next());
+            Object element = iterator.next();
+            if (set.contains(element)) {
+                found.add(element);
+            }
         }
-        return changed;
+        return found;
+    }
+
+    /** Modifie l'état de l'objet */
+    private static boolean performRemoval(Set<?> set, List<Object> elements) {
+        if (elements.isEmpty()) {
+            return false;
+        }
+        return set.removeAll(elements);
     }
 
     /**
