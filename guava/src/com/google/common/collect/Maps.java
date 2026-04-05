@@ -1557,12 +1557,12 @@ public final class Maps {
 
     @Override
     public boolean equals(@Nullable Object object) {
-      return Sets.equalsImpl(this, object);
+      return SetMapLinker.equalsImpl(this, object);
     }
 
     @Override
     public int hashCode() {
-      return Sets.hashCodeImpl(this);
+      return SetMapLinker.hashCodeImpl(this);
     }
   }
 
@@ -2961,12 +2961,12 @@ public final class Maps {
 
     @Override
     protected Set<Entry<K, V>> createEntrySet() {
-      return Sets.filter(unfiltered.entrySet(), predicate);
+      return SetMapLinker.filter(unfiltered.entrySet(), predicate);
     }
 
     @Override
     Set<K> createKeySet() {
-      return Sets.filter(unfiltered.keySet(), keyPredicate);
+      return SetMapLinker.filter(unfiltered.keySet(), keyPredicate);
     }
 
     // The cast is called only when the key is in the unfiltered map, implying
@@ -2988,7 +2988,7 @@ public final class Maps {
 
     FilteredEntryMap(Map<K, V> unfiltered, Predicate<? super Entry<K, V>> entryPredicate) {
       super(unfiltered, entryPredicate);
-      filteredEntrySet = Sets.filter(unfiltered.entrySet(), predicate);
+      filteredEntrySet = SetMapLinker.filter(unfiltered.entrySet(), predicate);
     }
 
     @Override
@@ -3576,12 +3576,12 @@ public final class Maps {
 
     @Override
     public NavigableSet<K> navigableKeySet() {
-      return Sets.unmodifiableNavigableSet(delegate.navigableKeySet());
+      return SetMapLinker.unmodifiableNavigableSet(delegate.navigableKeySet());
     }
 
     @Override
     public NavigableSet<K> descendingKeySet() {
-      return Sets.unmodifiableNavigableSet(delegate.descendingKeySet());
+      return SetMapLinker.unmodifiableNavigableSet(delegate.descendingKeySet());
     }
 
     @Override
@@ -3891,7 +3891,7 @@ public final class Maps {
   }
 
   static class KeySet<K extends @Nullable Object, V extends @Nullable Object>
-      extends Sets.ImprovedAbstractSet<K> {
+      extends SetMapLinker.ImprovedAbstractSet<K> {
     @Weak final Map<K, V> map;
 
     KeySet(Map<K, V> map) {
@@ -4174,7 +4174,7 @@ public final class Maps {
   }
 
   abstract static class EntrySet<K extends @Nullable Object, V extends @Nullable Object>
-      extends Sets.ImprovedAbstractSet<Entry<K, V>> {
+      extends SetMapLinker.ImprovedAbstractSet<Entry<K, V>> {
     abstract Map<K, V> map();
 
     @Override
@@ -4222,7 +4222,7 @@ public final class Maps {
         return super.removeAll(checkNotNull(c));
       } catch (UnsupportedOperationException e) {
         // if the iterators don't support remove
-        return Sets.removeAllImpl(this, c.iterator());
+        return SetMapLinker.removeAllImpl(this, c.iterator());
       }
     }
 
@@ -4232,7 +4232,7 @@ public final class Maps {
         return super.retainAll(checkNotNull(c));
       } catch (UnsupportedOperationException e) {
         // if the iterators don't support remove
-        Set<@Nullable Object> keys = Sets.newHashSetWithExpectedSize(c.size());
+        Set<@Nullable Object> keys = SetMapLinker.newHashSetWithExpectedSize(c.size());
         for (Object o : c) {
           /*
            * `o instanceof Entry` is guaranteed by `contains`, but we check it here to satisfy our

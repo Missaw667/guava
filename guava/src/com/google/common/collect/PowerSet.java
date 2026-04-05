@@ -9,7 +9,7 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-class PowerSet<E> extends AbstractSetsView<Set<E>>{
+class PowerSet<E> extends AbstractSet<Set<E>>{
     final ImmutableMap<E, Integer> inputSet;
 
     PowerSet(Set<E> input) {

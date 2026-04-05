@@ -286,9 +286,9 @@ public final class Sets {
    * @throws IllegalArgumentException if {@code expectedSize} is negative
    */
   @SuppressWarnings("NonApiType") // acts as a direct substitute for a constructor call
-  public static <E extends @Nullable Object> HashSet<E> newHashSetWithExpectedSize(
-      int expectedSize) {
-    return new HashSet<>(Maps.capacity(expectedSize));
+  public static <E extends @Nullable Object> LinkedHashSet<E> newLinkedHashSetWithExpectedSize(
+          int expectedSize) {
+    return new LinkedHashSet<>(SetMapLinker.capacity(expectedSize));
   }
 
   /**
@@ -383,9 +383,9 @@ public final class Sets {
    * @since 11.0
    */
   @SuppressWarnings("NonApiType") // acts as a direct substitute for a constructor call
-  public static <E extends @Nullable Object> LinkedHashSet<E> newLinkedHashSetWithExpectedSize(
-      int expectedSize) {
-    return new LinkedHashSet<>(Maps.capacity(expectedSize));
+  public static <E extends @Nullable Object> HashSet<E> newHashSetWithExpectedSize(
+          int expectedSize) {
+    return new HashSet<>(SetMapLinker.capacity(expectedSize));
   }
 
   // TreeSet
@@ -475,8 +475,8 @@ public final class Sets {
    *
    * @since 8.0
    */
-  public static <E extends @Nullable Object> Set<E> newIdentityHashSet() {
-    return Collections.newSetFromMap(Maps.newIdentityHashMap());
+  public static <E> Set<E> newIdentityHashSet() {
+    return SetMapLinker.newIdentityHashSet();
   }
 
   /**
@@ -1315,7 +1315,7 @@ public final class Sets {
     return new FilteredNavigableSet<>(checkNotNull(unfiltered), checkNotNull(predicate));
   }
 
-  private static class FilteredSet<E extends @Nullable Object> extends FilteredCollection<E>
+  public static class FilteredSet<E extends @Nullable Object> extends FilteredCollection<E>
       implements Set<E> {
     FilteredSet(Set<E> unfiltered, Predicate<? super E> predicate) {
       super(unfiltered, predicate);
